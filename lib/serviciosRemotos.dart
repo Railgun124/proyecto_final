@@ -38,16 +38,34 @@ class AuthService {
 var baseRemota = FirebaseFirestore.instance;
 
 class DB {
+  static Future<List> mostrarEventos()async{
+    List temp = [];
+    var query = await baseRemota.collection("events").get();
+
+    query.docs.forEach((element) {
+      Map<String,dynamic> dato = element.data();
+      dato.addAll({
+        'id':element.id
+      });
+      temp.add(dato);
+    });
+    return temp;
+  }
+
+  static Future insertarEvento(Map<String, dynamic> evento){
+    return baseRemota.collection("events").add(evento);
+  }
+
   static Future insertar(Map<String, dynamic> user) async {
     return baseRemota.collection("users").add(user);
   }
 
   // Ejemplo de cómo podrías utilizar las funciones para obtener UID y email
-  static void obtenerInformacionUsuarioActual() {
-    String? uid = AuthService.getCurrentUserUID();
-    String? email = AuthService.getCurrentUserEmail();
+  static String? obtenerUsuarioUID() {
+    return AuthService.getCurrentUserUID();
+  }
 
-    print("UID del usuario actual: $uid");
-    print("Email del usuario actual: $email");
+  static String? obtenerUsuarioEmail() {
+    return AuthService.getCurrentUserEmail();
   }
 }

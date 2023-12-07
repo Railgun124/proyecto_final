@@ -18,6 +18,9 @@ class _MenuUsuarioState extends State<MenuUsuario> {
   final agregarFotosFF = TextEditingController();
   bool addFAE = false;
   String? eventoSeleccionado;
+
+  final IDinvitacion = TextEditingController();
+  String invitacionID = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,7 +83,38 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       }
     //Invitaciones
       case 1:{
-        return Center();
+        return Column(
+          children: [
+            TextField(
+              controller: IDinvitacion,
+                decoration: InputDecoration(labelText: "Código de evento")),
+            ElevatedButton(onPressed: (){
+              setState(() {
+                invitacionID = IDinvitacion.text;
+              });
+              IDinvitacion.clear();
+            }, child: Text("Buscar")),
+            SizedBox(height: 20,),
+            if(invitacionID!="")
+            Expanded(
+                child: FutureBuilder(
+              future: DB.getEventoById(invitacionID),
+              builder: (context, eventosJSON) {
+                if (eventosJSON.hasData) {
+                  return ListView.builder(
+                    itemCount: eventosJSON.data?.length,
+                    itemBuilder: (context, indice) {
+                      return ListTile(
+                        title: Text("${eventosJSON.data?[indice]['nombre']}"),
+                      );
+                    },
+                  );
+                }
+                return Center(child: CircularProgressIndicator());
+              },
+            ))
+          ],
+        );
       }
     //Crear evento
       case 2:{

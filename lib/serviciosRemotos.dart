@@ -51,6 +51,13 @@ class DB {
     });
     return temp;
   }
+  static Future<List> getEventoById(String ID) async{
+    List temp = [];
+    var documento = await baseRemota.collection("events").doc(ID).get();
+    Map<String, dynamic>? dato = documento.data();
+    temp.add(dato);
+    return temp;
+  }
 
   static Future insertarEvento(Map<String, dynamic> evento){
     return baseRemota.collection("events").add(evento);

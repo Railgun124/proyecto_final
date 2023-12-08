@@ -22,6 +22,8 @@ class _MenuUsuarioState extends State<MenuUsuario> {
   bool addFAE = false;
   String? eventoSeleccionado;
 
+  String usuarioID = "";
+
   final IDinvitacion = TextEditingController();
   String invitacionID = "";
 
@@ -69,7 +71,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       //Eventos
       case 0: {
         return FutureBuilder(
-          future: DB.mostrarEventos(),
+          future: DB.getEventosByUser("${DB.obtenerUsuarioUID()}"),
           builder: (context, eventosJSON) {
             if (eventosJSON.hasData) {
               return ListView.builder(
@@ -215,6 +217,9 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 String ultimosTres = codigoEvento.substring(codigoEvento.length - 3);
                 codigoEvento='${primerosTres}${ultimosTres}${nombreEvento.text}';
               }
+
+              usuarioID = DB.obtenerUsuarioUID()!;
+
               var tJson = {
                 "nombre": nombreEvento.text,
                 "descripcion": descEvento.text,
@@ -222,11 +227,22 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 "fechaInicio": fechaInicio,
                 "fechaFin": fechaFin,
                 "addFAE": addFAE,
-                "idInv": codigoEvento
+                "idInv": codigoEvento,
+                "idUser": usuarioID,
               };
               DB.insertarEvento(tJson).then((value) => {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se creo el evento con exito")))
               });
+
+              codigoEvento = "";
+              nombreEvento.text = "";
+              descEvento.text = "";
+              eventoSeleccionado = "";
+              fechaInicioEvento.text = "";
+              fechaFinEvento.text = "";
+              addFAE = false;
+              usuarioID = "";
+
             }, child: Text("Guardar evento"))
           ],
         );

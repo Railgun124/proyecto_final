@@ -114,7 +114,7 @@ class DB {
     return AuthService.getCurrentUserUID();
   }
 
-  static String? obtenerUsuarioEmail() {
+  static String? obtenerUsuarioEmail(){
     return AuthService.getCurrentUserEmail();
   }
   // Agregar evento a invitaciones
@@ -170,6 +170,18 @@ class DB {
     return image;
   }
 
-
+  //Recuperar todos los eventos de un solo usuario
+  static Future<List> getEventosByUser(String idUser) async{
+    List temp = [];
+    var query = await baseRemota.collection("events").where('idUser',isEqualTo: idUser).get();
+    query.docs.forEach((element) {
+      Map<String,dynamic> dato = element.data();
+      dato.addAll({
+        'id':element.id
+      });
+      temp.add(dato);
+    });
+    return temp;
+  }
 
 }

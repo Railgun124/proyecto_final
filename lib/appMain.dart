@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:proyecto_final/menuUsuario.dart';
-import 'package:proyecto_final/newUser.dart';
-import 'package:proyecto_final/serviciosRemotos.dart';
+import 'package:dam_u4_proyecto_final/menuUsuario.dart';
+import 'package:dam_u4_proyecto_final/newUser.dart';
+import 'packserviciosRemotos.dart';
 
 class MainApp extends StatefulWidget {
   const MainApp({super.key});

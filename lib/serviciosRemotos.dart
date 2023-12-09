@@ -89,8 +89,9 @@ class DB {
     return temp;
   }
 
-  static Future insertarEvento(Map<String, dynamic> evento){
-    return baseRemota.collection("events").add(evento);
+  static Future insertarEvento(Map<String, dynamic> evento) async{
+     var documentReference = await baseRemota.collection("events").add(evento);
+     return documentReference.id;
   }
 
   static Future insertar(Map<String, dynamic> user) async {
@@ -183,5 +184,24 @@ class DB {
     });
     return temp;
   }
+
+  //obtener Evento recien insertado
+  static Future<Map<String, dynamic>?> getEventoInsertado(String idUser, String nombre, String descripcion, String? tipo, DateTime fechaInicio, DateTime fechaFin, bool addFAE, String? idInv) async {
+    var query = await baseRemota.collection("events").where('idUser', isEqualTo: idUser).where('nombre', isEqualTo: nombre)
+        .where('descripcion', isEqualTo: descripcion).where('tipo', isEqualTo: tipo).where('fechaInicio', isEqualTo: fechaInicio)
+        .where('fechaFin', isEqualTo: fechaFin).where('addFAE', isEqualTo: addFAE).where('idInv', isEqualTo: idInv).get();
+
+    if (query.docs.isNotEmpty) {
+      var element = query.docs.first;
+      Map<String, dynamic> dato = element.data();
+      dato.addAll({
+        'id': element.id
+      });
+      return dato;
+    } else {
+      return null; // No se encontró ningún evento con los parámetros proporcionados
+    }
+  }
+
 
 }

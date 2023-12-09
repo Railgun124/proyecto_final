@@ -71,14 +71,39 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       //Eventos
       case 0: {
         return FutureBuilder(
-          future: DB.getEventosByUser("${DB.obtenerUsuarioUID()}"),
+          future: DB.mostrarInvitaciones("${DB.obtenerUsuarioUID()}"),
           builder: (context, eventosJSON) {
             if (eventosJSON.hasData) {
               return ListView.builder(
                 itemCount: eventosJSON.data?.length,
                 itemBuilder: (context, indice) {
+                  if(eventosJSON.data?[indice]['owner']==DB.obtenerUsuarioUID())
                   return ListTile(
-                    title: Text("${eventosJSON.data?[indice]['nombre']}"),
+                    title: Column(
+                      children: [
+                        (eventosJSON.data?[indice]['imagenesURL']==null)?
+                        Container(
+                          margin: EdgeInsets.all(10),
+                          height: 200,
+                          width: MediaQuery.sizeOf(context).width,
+                          color: Colors.grey,
+                          child: Icon(Icons.photo),
+                        )
+                            :
+                        Image.network("${eventosJSON.data?[indice]['imagenesURL'][0]}"),
+                        Text("${eventosJSON.data?[indice]['tipo']} - ${eventosJSON.data?[indice]['nombre']}")
+                      ],
+                    ),
+                      onTap: () async{
+                        await Navigator.push(context,
+                            MaterialPageRoute(builder: (context) => viewInvitation(
+                              eventID: '${eventosJSON.data?[indice]['idEvento']}',
+                              invitationID: '${eventosJSON.data?[indice]['id']}',
+                            )));
+                        setState(() {
+                          _indice = 1;
+                        });
+                      }
                   );
                 },
               );
@@ -97,6 +122,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 return ListView.builder(
                   itemCount: eventosJSON.data?.length,
                   itemBuilder: (context, indice) {
+                    if(eventosJSON.data?[indice]['owner']!=DB.obtenerUsuarioUID())
                     return ListTile(
                       title: Column(
                         children: [
@@ -210,7 +236,8 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                   addFAE = value;
                 });},
             ),
-            ElevatedButton(onPressed: (){
+            ElevatedButton(onPressed: () async{
+              try{
               String? codigoEvento=DB.obtenerUsuarioUID();
               if (codigoEvento != null && codigoEvento.length >= 6) {
                 String primerosTres = codigoEvento.substring(0, 3);
@@ -230,7 +257,19 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 "idInv": codigoEvento,
                 "idUser": usuarioID,
               };
-              DB.insertarEvento(tJson).then((value) => {
+
+              var EventId = await DB.insertarEvento(tJson);
+
+              var JSONTemp = {
+                'nombre':nombreEvento.text,
+                'tipo': eventoSeleccionado,
+                'descripcion': descEvento.text,
+                'idEvento': EventId,
+                'idUser': usuarioID,
+                'owner': usuarioID
+              };
+
+              DB.agregarEventoInvitacion(JSONTemp).then((value) => {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se creo el evento con exito")))
               });
 
@@ -242,6 +281,9 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               fechaFinEvento.text = "";
               addFAE = false;
               usuarioID = "";
+              }catch(e){
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ocurrio un error intentalo de nuevo")));
+              }
 
             }, child: Text("Guardar evento"))
           ],

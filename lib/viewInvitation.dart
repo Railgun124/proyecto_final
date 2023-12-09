@@ -34,6 +34,14 @@ class _viewInvitationState extends State<viewInvitation>{
           future: DB.getEventoById(eventID),
           builder: (context,JSON){
             if (JSON.hasData) {
+              if(JSON.data?[0]['imagenesURL']==null)
+                return Center(child: Container(
+                  margin: EdgeInsets.all(10),
+                  height: 200,
+                  width: MediaQuery.sizeOf(context).width,
+                  color: Colors.grey,
+                  child: Icon(Icons.photo),
+                ),);
               return GridView.count(
                 crossAxisCount: 3,
                 children: List.generate(JSON.data?[0]['imagenesURL'].length, (index){

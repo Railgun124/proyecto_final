@@ -44,10 +44,9 @@ class AuthService {
 var baseRemota = FirebaseFirestore.instance;
 var fireStorage = FirebaseStorage.instance;
 class DB {
-  static Future<List> mostrarEventos()async{
+  static Future<List> mostrarEventos(String UID)async{
     List temp = [];
-    var query = await baseRemota.collection("events").get();
-
+    var query = await baseRemota.collection("events").where("idUser",isEqualTo: UID).get();
     query.docs.forEach((element) {
       Map<String,dynamic> dato = element.data();
       dato.addAll({
@@ -75,10 +74,23 @@ class DB {
     temp.add(dato);
     return temp;
   }
+  static Future<List> getInvitacionsById(String ID) async{
+    List temp = [];
+    var query = await baseRemota.collection("invitations").where("idEvent",isEqualTo: ID).get();
+    query.docs.forEach((element) {
+      Map<String,dynamic> dato = element.data();
+      dato.addAll({
+        'id':element.id
+      });
+      temp.add(dato);
+    });
+    return temp;
+  }
   //Mostrar invitaciones por UID de usuario
   static Future<List> mostrarInvitaciones(String idUser)async{
     List temp = [];
     var query = await baseRemota.collection("invitations").where('idUser',isEqualTo: idUser).get();
+
     query.docs.forEach((element) {
       Map<String,dynamic> dato = element.data();
       dato.addAll({

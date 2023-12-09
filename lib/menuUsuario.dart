@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:proyecto_final/addEvento.dart';
 import 'package:proyecto_final/addImage.dart';
 import 'package:proyecto_final/serviciosRemotos.dart';
+import 'package:proyecto_final/viewEvent.dart';
 import 'package:proyecto_final/viewInvitation.dart';
 
 class MenuUsuario extends StatefulWidget {
@@ -71,7 +74,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       //Eventos
       case 0: {
         return FutureBuilder(
-          future: DB.mostrarInvitacionesPro("${DB.obtenerUsuarioUID()}"),
+          future: DB.mostrarEventos("${DB.obtenerUsuarioUID()}"),
           builder: (context, eventosJSON) {
             if (eventosJSON.hasData) {
               return ListView.builder(
@@ -95,12 +98,12 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                     ),
                       onTap: () async{
                         await Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => viewInvitation(
-                              eventID: '${eventosJSON.data?[indice]['idEvento']}',
+                            MaterialPageRoute(builder: (context) => viewEvent(
+                              eventID: '${eventosJSON.data?[indice]['id']}',
                               invitationID: '${eventosJSON.data?[indice]['id']}',
                             )));
                         setState(() {
-                          _indice = 1;
+                          _indice = 0;
                         });
                       }
                   );
@@ -121,31 +124,50 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 return ListView.builder(
                   itemCount: eventosJSON.data?.length,
                   itemBuilder: (context, indice) {
-                    return ListTile(
-                      title: Column(
-                        children: [
-                          (eventosJSON.data?[indice]['imagenesURL']==null)?
-                          Container(
-                            margin: EdgeInsets.all(10),
-                            height: 200,
-                            width: MediaQuery.sizeOf(context).width,
-                            color: Colors.grey,
-                            child: Icon(Icons.photo),
-                          )
-                              :
-                          Image.network("${eventosJSON.data?[indice]['imagenesURL'][0]}"),
-                          Text("${eventosJSON.data?[indice]['tipo']} - ${eventosJSON.data?[indice]['nombre']}")
-                        ],
-                      ),
-                      onTap: () async{
-                        await Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => viewInvitation(
-                              eventID: '${eventosJSON.data?[indice]['idEvento']}',
-                              invitationID: '${eventosJSON.data?[indice]['id']}',
-                            )));
-                        setState(() {
-                          _indice = 1;
-                        });
+                    return FutureBuilder(
+                      future: DB.getEventoById(eventosJSON.data?[indice]['idEvento']),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else if(snapshot.hasData){
+                          var imagenURL;
+                          if (snapshot.data != null &&
+                              snapshot.data?[0]['imagenesURL'] != null &&
+                              snapshot.data?[0]['imagenesURL'].isNotEmpty) {
+                            imagenURL = snapshot.data?[0]['imagenesURL'][0];
+                          }
+
+                          return ListTile(
+                            title: Column(
+                              children: [
+                                (imagenURL==null)?
+                                Container(
+                                  margin: EdgeInsets.all(10),
+                                  height: 200,
+                                  width: MediaQuery.of(context).size.width,
+                                  color: Colors.grey,
+                                  child: Icon(Icons.photo),
+                                )
+                                    :
+                                Image.network(imagenURL),
+                                Text("${eventosJSON.data?[indice]['tipo']} - ${eventosJSON.data?[indice]['nombre']}")
+                              ],
+                            ),
+                            onTap: () async{
+                              await Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) => viewInvitation(
+                                    eventID: '${eventosJSON.data?[indice]['idEvento']}',
+                                    invitationID: '${eventosJSON.data?[indice]['id']}',
+                                  )));
+                              setState(() {
+                                _indice = 1;
+                              });
+                            },
+                          );
+                        }
+                        return Center(child: CircularProgressIndicator(),);
                       },
                     );
                   },
@@ -153,7 +175,8 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               }
               return Center(child: CircularProgressIndicator());
             },
-          ),
+          )
+          ,
           floatingActionButton: FloatingActionButton(onPressed: ()async{
             await Navigator.push(context,
                 MaterialPageRoute(builder: (context) => addEvent()));

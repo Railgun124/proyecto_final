@@ -94,6 +94,10 @@ class _addImageToEventState extends State<addImageToEvent> {
                 'idInv': "${evento[0]['idInv']}",
                 'imagenesURL': imagenesURL,
               };
+              if(invitationID==eventID){
+                var invitaciones = await DB.getInvitacionsById(invitationID);
+
+              }
               var invitacion = await DB.getInvitacionById(invitationID);
               imagenesURL = invitacion[0]['imagenesURL'];
               if(imagenesURL == null) {

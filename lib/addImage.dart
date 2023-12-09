@@ -120,7 +120,7 @@ class _addImageToEventState extends State<addImageToEvent> {
                 });
 
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Producto Insertado!")));
+                    SnackBar(content: Text("Imagen subida!")));
               });
               //Quitar circular
               Navigator.pop(context);

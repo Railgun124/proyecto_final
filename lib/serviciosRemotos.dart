@@ -89,6 +89,20 @@ class DB {
     return temp;
   }
 
+  //Mostrar invitaciones por UID de usuario
+  static Future<List> mostrarInvitacionesPro(String idUser)async{
+    List temp = [];
+    var query = await baseRemota.collection("invitationsPro").where('idUser',isEqualTo: idUser).get();
+    query.docs.forEach((element) {
+      Map<String,dynamic> dato = element.data();
+      dato.addAll({
+        'id':element.id
+      });
+      temp.add(dato);
+    });
+    return temp;
+  }
+
   static Future insertarEvento(Map<String, dynamic> evento) async{
      var documentReference = await baseRemota.collection("events").add(evento);
      return documentReference.id;
@@ -122,9 +136,13 @@ class DB {
   static Future agregarEventoInvitacion(Map<String,dynamic> event) async{
     return baseRemota.collection("invitations").add(event);
   }
+  // Agregar evento a invitaciones
+  static Future agregarEventoPropietario(Map<String,dynamic> event) async{
+    return baseRemota.collection("invitationsPro").add(event);
+  }
   // Verificar que al agregar no se repita el evento en invitaciones
   static Future verificarRepeticionInvitacion(String IDevento, String IDUser) async{
-    var query = await baseRemota.collection("invitations").where('idUser',isEqualTo: IDUser).where("idEvento").get();
+    var query = await baseRemota.collection("invitations").where('idUser',isEqualTo: IDUser).where("idEvento", isEqualTo: IDevento).get();
     if(query.size>0)return true;
     return false;
   }

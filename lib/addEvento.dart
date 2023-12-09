@@ -57,7 +57,8 @@ class _addEventState extends State<addEvent> {
                                   'tipo': "${eventosJSON.data?[indice]['tipo']}",
                                   'descripcion': "${eventosJSON.data?[indice]['descripcion']}",
                                   'idEvento': "${eventosJSON.data?[indice]['id']}",
-                                  'idUser': "${await DB.obtenerUsuarioUID()}"
+                                  'idUser': "${await DB.obtenerUsuarioUID()}",
+                                  'owner': ""
                                 };
                                 await DB.verificarRepeticionInvitacion("${eventosJSON.data?[indice]['id']}","${await DB.obtenerUsuarioUID()}").then((value) async{
                                   if(value==true){

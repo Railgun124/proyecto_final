@@ -71,13 +71,12 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       //Eventos
       case 0: {
         return FutureBuilder(
-          future: DB.mostrarInvitaciones("${DB.obtenerUsuarioUID()}"),
+          future: DB.mostrarInvitacionesPro("${DB.obtenerUsuarioUID()}"),
           builder: (context, eventosJSON) {
             if (eventosJSON.hasData) {
               return ListView.builder(
                 itemCount: eventosJSON.data?.length,
                 itemBuilder: (context, indice) {
-                  if(eventosJSON.data?[indice]['owner']==DB.obtenerUsuarioUID())
                   return ListTile(
                     title: Column(
                       children: [
@@ -122,7 +121,6 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 return ListView.builder(
                   itemCount: eventosJSON.data?.length,
                   itemBuilder: (context, indice) {
-                    if(eventosJSON.data?[indice]['owner']!=DB.obtenerUsuarioUID())
                     return ListTile(
                       title: Column(
                         children: [
@@ -269,7 +267,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 'owner': usuarioID
               };
 
-              DB.agregarEventoInvitacion(JSONTemp).then((value) => {
+              DB.agregarEventoPropietario(JSONTemp).then((value) => {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se creo el evento con exito")))
               });
 

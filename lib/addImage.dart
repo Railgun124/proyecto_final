@@ -94,35 +94,11 @@ class _addImageToEventState extends State<addImageToEvent> {
                 'idInv': "${evento[0]['idInv']}",
                 'imagenesURL': imagenesURL,
               };
-              if(invitationID==eventID){
-                var invitaciones = await DB.getInvitacionsById(invitationID);
-
-              }
-              var invitacion = await DB.getInvitacionById(invitationID);
-              imagenesURL = invitacion[0]['imagenesURL'];
-              if(imagenesURL == null) {
-                imagenesURL = ["$value"];
-              } else {
-                imagenesURL.add("$value");
-              }
-              var tempJSONInv = {
-                'id': "${invitacion[0]['id']}",
-                'nombre': "${invitacion[0]['nombre']}",
-                'descripcion': "${invitacion[0]['descripcion']}",
-                'tipo': "${invitacion[0]['tipo']}",
-                'idEvento': "$eventID",
-                'idUser': "${await DB.obtenerUsuarioUID()}",
-                'imagenesURL': imagenesURL,
-              };
-              await DB.updateEvento(tempJSON).then((value) async {
-
-                await DB.updateInvitacion(tempJSONInv).then((value) {
-                  imagen_to_upload = null;
-                  setState(() {
-                    subido = true;
-                  });
+              await DB.updateEvento(tempJSON).then((value) {
+                imagen_to_upload = null;
+                setState(() {
+                  subido = true;
                 });
-
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("Imagen subida!")));
               });

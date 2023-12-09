@@ -44,8 +44,14 @@ class _viewInvitationState extends State<viewInvitation>{
                 ),);
               return GridView.count(
                 crossAxisCount: 3,
+                mainAxisSpacing: 20,
                 children: List.generate(JSON.data?[0]['imagenesURL'].length, (index){
-                  return Image.network(JSON.data?[0]['imagenesURL'][index]);
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(child: Image.network(JSON.data?[0]['imagenesURL'][index]),flex: 10,),
+                    ],
+                  );
                 }),
               );
             }

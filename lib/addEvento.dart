@@ -60,6 +60,7 @@ class _addEventState extends State<addEvent> {
                                   'idUser': "${await DB.obtenerUsuarioUID()}",
                                   'owner': ""
                                 };
+
                                 await DB.verificarRepeticionInvitacion("${eventosJSON.data?[indice]['id']}","${await DB.obtenerUsuarioUID()}").then((value) async{
                                   if(value==true){
                                     showDialog(context: context, builder: (builder){
@@ -76,13 +77,33 @@ class _addEventState extends State<addEvent> {
                                         ],
                                       );
                                     });
+                                  }else {
+                                    await DB.verificarAgregarEventoPropio("${eventosJSON.data?[indice]['id']}","${await DB.obtenerUsuarioUID()}").then((value)async{
+                                      if(value==true){
+                                        showDialog(context: context, builder: (builder){
+                                          return AlertDialog(
+                                            title: Text("No puedes agregar tu propio evento"),
+                                            actions: [
+                                              ElevatedButton(onPressed: (){
+                                                Navigator.pop(context);
+                                              }, child: Text("Cancelar")),
+                                              ElevatedButton(onPressed: (){
+                                                Navigator.pop(context);
+                                                Navigator.pop(context);
+                                              }, child: Text("Aceptar y volver")),
+                                            ],
+                                          );
+                                        });
+                                      }
+                                      else{
+                                        await DB.agregarEventoInvitacion(JSONTemp).then((value){
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Invitación agregada")));
+                                        });
+                                      }
+                                  });
                                   }
-                                  else {
-                                    await DB.agregarEventoInvitacion(JSONTemp).then((value){
-                                      Navigator.pop(context);
-                                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Invitación agregada")));
-                                    });
-                                  }
+
                                 });
 
                               }, child: Text("Agregar"))

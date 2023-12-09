@@ -158,6 +158,18 @@ class DB {
     if(query.size>0)return true;
     return false;
   }
+  // Verificar que no agregues tu propio evento
+  static Future verificarAgregarEventoPropio(String IDevento, String IDUser) async{
+    var evento = await baseRemota.collection("events").where("idUser",isEqualTo: IDUser).get();
+    String eventid = evento.docs.first.id;
+    if (evento.size>0) {
+      if (eventid == IDevento) {
+        print(true);
+        return true;
+      }
+    }
+    return false;
+  }
  //Eliminar
   static Future deleteImageFromStorage(String URL) async{
     final String path = URL.split("?")[0];

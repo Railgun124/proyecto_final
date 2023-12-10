@@ -13,10 +13,6 @@ class viewEvent extends StatefulWidget {
 class _viewEventState extends State<viewEvent>{
   var eventID;
   var invitationID;
-  var tipoEvento;
-  var propiedad;
-  var descripcion;
-  var imagenesURL;
 
   @override
   void initState(){
@@ -49,9 +45,42 @@ class _viewEventState extends State<viewEvent>{
                   return Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Expanded(child: Image.network(JSON.data?[0]['imagenesURL'][index]),flex: 10,),
-                      Expanded(child: Icon(Icons.delete),flex: 1,),
-
+                      Expanded(child: Image.network(JSON.data?[0]['imagenesURL'][index]),flex: 9,),
+                      Expanded(flex: 3,child: IconButton(onPressed: () async{
+                        showDialog(context: context, builder: (builder){
+                          return AlertDialog(
+                            title: Text("¿Eliminar?"),
+                            content: Text("¿Seguro que quieres eliminar esta imagen?"),
+                            actions: [
+                              ElevatedButton(onPressed: (){
+                                Navigator.pop(context);
+                              }, child: Text("Cancelar")),
+                              ElevatedButton(onPressed: () async{
+                                showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (builder) {
+                                      return WillPopScope(
+                                        onWillPop: () async => false,
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    });
+                                await DB.deleteImageFromStorage(JSON.data?[0]['imagenesURL'][index]).then((value)async{
+                                  await DB.deleteImageFromDatabase(JSON.data?[0],JSON.data?[0]['imagenesURL'][index]).then((value){
+                                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Imagen Eliminada!")));
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (builder){return viewEvent(eventID: eventID, invitationID: invitationID);}));
+                                  });
+                                }
+                                );
+                              }, child: Text("Borrar"))
+                            ],
+                          );
+                        });
+                      }, icon: Icon(Icons.cancel)),),
                     ],
                   );
                 }),

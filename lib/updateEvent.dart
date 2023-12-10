@@ -35,12 +35,18 @@ class _updateEventState extends State<updateEvent> {
           Card(
             child: Column(
               children: [
-                Text(eventID),
-                ElevatedButton(onPressed: (){
-                  Clipboard.setData(ClipboardData(text: eventID)).then((value){
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se copió el código al portapapeles")));
-                  });
-                }, child: Text("Copiar código")),
+                Text("Código de invitación: "),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(eventID),
+                    IconButton(onPressed: (){
+                      Clipboard.setData(ClipboardData(text: eventID)).then((value){
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se copió el código al portapapeles")));
+                      });
+                    }, icon: Icon(Icons.copy)),
+                  ],
+                ),
                 ListTile(
                   title: Text('Ver albúm'),
                   onTap: () {

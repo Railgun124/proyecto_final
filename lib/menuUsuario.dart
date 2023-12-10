@@ -378,13 +378,14 @@ class _MenuUsuarioState extends State<MenuUsuario> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: fechaInicio,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2001),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != fechaInicio) {
-      if (picked.isAfter(fechaInicio)) {
+      if (picked.isBefore(fechaFin)) {
         setState(() {
           fechaInicio = picked;
+          fechaInicioEvento.text = "${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year}";
         });
       } else {
         showDialog(
@@ -419,6 +420,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       if (picked.isAfter(fechaInicio)) {
         setState(() {
           fechaFin = picked;
+          fechaFinEvento.text = "${fechaFin.day}/${fechaFin.month}/${fechaFin.year}";
         });
       } else {
         showDialog(

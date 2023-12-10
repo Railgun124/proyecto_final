@@ -15,7 +15,29 @@ class MenuUsuario extends StatefulWidget {
 
 class _MenuUsuarioState extends State<MenuUsuario> {
   int _indice = 0;
-  List<String> eventos=["Bautizo","Boda"];
+
+  List<String> eventos=[
+    'Cumpleaños',
+    'Boda',
+    'Aniversario',
+    'Despedida de soltero/a',
+    'Baby shower',
+    'Graduación',
+    'Reunión familiar',
+    'Fiesta temática',
+    'Evento corporativo',
+    'Fiesta de inauguración',
+    'Fiesta de compromiso',
+    'Fiesta de bienvenida',
+    'Noche de juegos',
+    'Cena elegante',
+    'Karaoke',
+    'Fiesta en la piscina',
+    'Fiesta de disfraces',
+    'Concierto privado',
+    'Fiesta de Navidad',
+    'Fiesta de Año Nuevo',];
+
   final nombreEvento = TextEditingController();
   final descEvento = TextEditingController();
   final fechaInicioEvento = TextEditingController();
@@ -28,6 +50,11 @@ class _MenuUsuarioState extends State<MenuUsuario> {
 
   final IDinvitacion = TextEditingController();
   String invitacionID = "";
+
+  String obtenerPrimeraLetra() {
+    String correo = DB.obtenerUsuarioEmail()!;
+    return correo.isNotEmpty ? correo.substring(0, 1).toUpperCase() : '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +69,12 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  child: Text("${DB.obtenerUsuarioEmail()}"),
+                  child: Text(
+                    obtenerPrimeraLetra(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
                 SizedBox(height: 10,),
                 Text("${DB.obtenerUsuarioEmail()}",
@@ -53,15 +85,15 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               ],
             ),decoration: BoxDecoration(color: Colors.lightBlue),),
             SizedBox(height: 40,),
-            _item(Icons.account_box,"Mis Eventos",0),
+            _item(Icons.people_alt,"Mis Eventos",0),
             SizedBox(height: 10,),
-            _item(Icons.account_box,"Invitaciones",1),
+            _item(Icons.table_rows_outlined,"Invitaciones",1),
             SizedBox(height: 10,),
-            _item(Icons.account_box,"Crear Evento",2),
+            _item(Icons.event,"Crear Evento",2),
             SizedBox(height: 10,),
-            _item(Icons.account_box,"Configuracion",3),
+            _item(Icons.settings,"Configuracion",3),
             SizedBox(height: 10,),
-            _item(Icons.account_box,"Salir",4),
+            _item(Icons.reply_all_sharp,"Salir",4),
           ],
         ),
       ),
@@ -291,157 +323,174 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       }
     //Crear evento
       case 2:{
-        return ListView(
-          children: [
-            TextField(
-              controller: nombreEvento,
-              decoration: InputDecoration(
-                  labelText: "Nombre del Evento"
-              ),),
-            TextField(
-              controller: descEvento,
-              decoration: InputDecoration(
-                  labelText: "Descripcion del evento"
-              ),),
-            DropdownButton<String>(
-              hint: Text("Seleccionar el tipo de evento"),
-              value: eventoSeleccionado, // Valor actualmente seleccionado
-              onChanged: (String? value) {
-                setState(() {
-                  eventoSeleccionado = value; // Actualiza la materia seleccionada
-                });
-              },
-              items: eventos.map((evento) {
-                return DropdownMenuItem<String>(
-                  value: evento, // Puedes usar el ID de la materia como valor
-                  child: Text(evento),
-                  onTap: () {},
-                );
-              }).toList(),
-            ),
-            TextFormField(
-              readOnly: true,
-              controller: fechaInicioEvento,
-              onTap: () {
-                _selectDate2(context);
-              },
-              decoration: InputDecoration(
-                labelText: 'Fecha Inicio',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
-                  onPressed: () {
-                    _selectDate2(context);
-                  },
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: ListView(
+            children: [
+              TextField(
+                controller: nombreEvento,
+                decoration: InputDecoration(
+                    labelText: "Nombre del Evento"
                 ),
               ),
-            ),
-            TextFormField(
-              readOnly: true,
-              controller: fechaFinEvento,
-              onTap: () {
-                _selectDate(context);
-              },
-              decoration: InputDecoration(
-                labelText: 'Fecha Fin',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today),
-                  onPressed: () {
-                    _selectDate(context);
-                  },
+              SizedBox(height: 10),
+              TextField(
+                controller: descEvento,
+                decoration: InputDecoration(
+                    labelText: "Descripcion del Evento"
                 ),
               ),
-            ),
-            Text("Agregar imagenes despues de la fecha final?"),
-            Switch(
-              value: addFAE,
-              activeColor: Colors.red,
-              onChanged: (bool value) {
-                setState(() {
-                  addFAE = value;
-                });},
-            ),
-            ElevatedButton(onPressed: () async{
-              try{
-              String? codigoEvento=DB.obtenerUsuarioUID();
-              if (codigoEvento != null && codigoEvento.length >= 6) {
-                String primerosTres = codigoEvento.substring(0, 3);
-                String ultimosTres = codigoEvento.substring(codigoEvento.length - 3);
-                codigoEvento='${primerosTres}${ultimosTres}${nombreEvento.text}';
-              }
+              SizedBox(height: 10),
+              DropdownButton<String>(
+                hint: Text("Seleccionar el Tipo de Evento                           "),
+                value: eventoSeleccionado,
+                onChanged: (String? value) {
+                  setState(() {
+                    eventoSeleccionado = value;
+                  });
+                },
+                items: eventos.map((evento) {
+                  return DropdownMenuItem<String>(
+                    value: evento,
+                    child: Text(evento),
+                    onTap: () {},
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                readOnly: true,
+                controller: fechaInicioEvento,
+                onTap: () {
+                  _selectDate2(context);
+                },
+                decoration: InputDecoration(
+                  labelText: 'Fecha Inicio',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () {
+                      _selectDate2(context);
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              TextFormField(
+                readOnly: true,
+                controller: fechaFinEvento,
+                onTap: () {
+                  _selectDate(context);
+                },
+                decoration: InputDecoration(
+                  labelText: 'Fecha Fin',
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () {
+                      _selectDate(context);
+                    },
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Text("Agregar imágenes después de la fecha final?"),
+              Switch(
+                value: addFAE,
+                activeColor: Colors.red,
+                onChanged: (bool value) {
+                  setState(() {
+                    addFAE = value;
+                  });
+                },
+              ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                  onPressed: () async{
+                    try {
+                      String? codigoEvento = DB.obtenerUsuarioUID();
+                      if (codigoEvento != null && codigoEvento.length >= 6) {
+                        String primerosTres = codigoEvento.substring(0, 3);
+                        String ultimosTres = codigoEvento.substring(codigoEvento.length - 3);
+                        codigoEvento = '${primerosTres}${ultimosTres}${nombreEvento.text}';
+                      }
 
-              usuarioID = DB.obtenerUsuarioUID()!;
+                      usuarioID = DB.obtenerUsuarioUID()!;
 
-              var tJson = {
-                "nombre": nombreEvento.text,
-                "descripcion": descEvento.text,
-                "tipo":eventoSeleccionado,
-                "fechaInicio": fechaInicio,
-                "fechaFin": fechaFin,
-                "addFAE": addFAE,
-                "idInv": codigoEvento,
-                "idUser": usuarioID,
-              };
+                      var tJson = {
+                        "nombre": nombreEvento.text,
+                        "descripcion": descEvento.text,
+                        "tipo": eventoSeleccionado,
+                        "fechaInicio": fechaInicio,
+                        "fechaFin": fechaFin,
+                        "addFAE": addFAE,
+                        "idInv": codigoEvento,
+                        "idUser": usuarioID,
+                      };
 
-              var EventId = await DB.insertarEvento(tJson);
+                      var EventId = await DB.insertarEvento(tJson);
 
-              var JSONTemp = {
-                'nombre':nombreEvento.text,
-                'tipo': eventoSeleccionado,
-                'descripcion': descEvento.text,
-                'idEvento': EventId,
-                'idUser': usuarioID,
-                'owner': usuarioID
-              };
+                      var JSONTemp = {
+                        'nombre': nombreEvento.text,
+                        'tipo': eventoSeleccionado,
+                        'descripcion': descEvento.text,
+                        'idEvento': EventId,
+                        'idUser': usuarioID,
+                        'owner': usuarioID
+                      };
 
-              DB.agregarEventoPropietario(JSONTemp).then((value) => {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se creo el evento con exito")))
-              });
+                      DB.agregarEventoPropietario(JSONTemp).then((value) => {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se creó el evento con éxito")))
+                      });
 
-              codigoEvento = "";
-              nombreEvento.text = "";
-              descEvento.text = "";
-              eventoSeleccionado = "";
-              fechaInicioEvento.text = "";
-              fechaFinEvento.text = "";
-              addFAE = false;
-              usuarioID = "";
-              }catch(e){
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ocurrio un error intentalo de nuevo")));
-              }
-
-            }, child: Text("Guardar evento"))
-          ],
+                      codigoEvento = "";
+                      nombreEvento.text = "";
+                      descEvento.text = "";
+                      eventoSeleccionado = "";
+                      fechaInicioEvento.text = "";
+                      fechaFinEvento.text = "";
+                      addFAE = false;
+                      usuarioID = "";
+                    } catch(e) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ocurrió un error, inténtalo de nuevo")));
+                    }
+                  },
+                  child: Text("Guardar evento")
+              ),
+            ],
+          ),
         );
       }
-      //configuracion
+    //configuracion
       case 3: {
-        return ListView(
-          children: [
-            Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    title: Text('Actualizar Contraseña'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => cambiarPass()),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    title: Text('Actualizar Correo Electrónico'),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => cambiarEmail()),
-                      );
-                    },
-                  ),
-                ],
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: ListView(
+            children: [
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text('Actualizar Contraseña'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => cambiarPass()),
+                        );
+                      },
+                    ),
+                    ListTile(
+                      title: Text('Actualizar Correo Electrónico'),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => cambiarEmail()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       }
 

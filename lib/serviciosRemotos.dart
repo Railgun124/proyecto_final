@@ -172,10 +172,21 @@ class DB {
   }
  //Eliminar
   static Future deleteImageFromStorage(String URL) async{
-    final String path = URL.split("?")[0];
+    final String url = URL.split("?")[0];
+    final String path = url.split("/").last;
     final String fileName = path.split("%2F").last;
-    final Reference refe = fireStorage.ref().child("productos").child(fileName);
+    final String carpeta = path.split("%2F")[1];
+    final Reference refe = fireStorage.ref().child("eventos").child(carpeta).child(fileName);
     return await refe.delete();
+  }
+  static Future deleteImageFromDatabase(Map<String,dynamic> event,String URL) async {
+    //Se recupera desde la consulta
+    String id = event['id'];
+    event.remove('id');
+    if(event['imagenesURL'].length==1)
+      return await baseRemota.collection("events").doc(id).update({'imagenesURL':FieldValue.delete()});
+    else
+      return await baseRemota.collection("events").doc(id).update({'imagenesURL':FieldValue.arrayRemove([URL])});
   }
   static Future<XFile> getImageXFileByUrl(String url) async {
     var file = await DefaultCacheManager().getSingleFile(url);
@@ -200,7 +211,7 @@ class DB {
     var id = generateID();
     final String imageType = image.path.split(".").last;
     final String uploadNameFile = "${id}.${imageType}";
-    final Reference refe = fireStorage.ref().child("eventos").child("${userID}").child(uploadNameFile);
+    final Reference refe = fireStorage.ref().child("eventos").child("${eventID}").child(uploadNameFile);
     final UploadTask uploadTask = refe.putFile(image);
     final TaskSnapshot snapshot = await uploadTask.whenComplete(() => true);
     final String url = await snapshot.ref.getDownloadURL();

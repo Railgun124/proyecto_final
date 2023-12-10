@@ -44,15 +44,17 @@ class _addImageToEventState extends State<addImageToEvent> {
               child: Column(
                 children: [Text("Abrir Galería"), Icon(Icons.photo)],
               )),
-          imagen_to_upload != null
-              ? Image.file(imagen_to_upload!)
-              : Container(
-                  margin: EdgeInsets.all(10),
-                  height: 200,
-                  width: MediaQuery.sizeOf(context).width,
-                  color: Colors.grey,
-                  child: Icon(Icons.photo),
-                ),
+              Center(
+                child: imagen_to_upload != null
+                    ? Image.file(imagen_to_upload!)
+                    : Container(
+                        margin: EdgeInsets.all(10),
+                        height: 200,
+                        width: MediaQuery.sizeOf(context).width,
+                        color: Colors.grey,
+                        child: Icon(Icons.photo),
+                      ),
+              ),
         ],
       ),
       floatingActionButton: FloatingActionButton(

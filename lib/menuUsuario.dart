@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_final/addEvento.dart';
+import 'package:proyecto_final/cambiarEmail.dart';
+import 'package:proyecto_final/cambiarPass.dart';
 import 'package:proyecto_final/serviciosRemotos.dart';
 import 'package:proyecto_final/viewEvent.dart';
 import 'package:proyecto_final/viewInvitation.dart';
@@ -40,10 +42,10 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircleAvatar(
-                  child: Text("GX"),
+                  child: Text("${DB.obtenerUsuarioEmail()}"),
                 ),
                 SizedBox(height: 10,),
-                Text("Usuario",
+                Text("${DB.obtenerUsuarioEmail()}",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 25
@@ -412,10 +414,38 @@ class _MenuUsuarioState extends State<MenuUsuario> {
         );
       }
       //configuracion
-      case 3:{
-        return Center();
+      case 3: {
+        return ListView(
+          children: [
+            Card(
+              child: Column(
+                children: [
+                  ListTile(
+                    title: Text('Actualizar Contraseña'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => cambiarPass()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    title: Text('Actualizar Correo Electrónico'),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => cambiarEmail()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
       }
-      //Cerrar sesion
+
+    //Cerrar sesion
       case 4:{
         AuthService.signOut();
         return Navigator.pop(context);

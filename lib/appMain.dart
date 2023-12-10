@@ -48,9 +48,6 @@ class _MainAppState extends State<MainApp> {
               }, child: Text("Registrarse"))
             ],
           ),
-          ElevatedButton(onPressed: (){
-
-          }, child: Text("Usar codigo de invitacion"))
         ],
       ),
     );

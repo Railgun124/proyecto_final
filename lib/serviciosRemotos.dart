@@ -10,6 +10,29 @@ import 'package:image_picker/image_picker.dart';
 var _auth = FirebaseAuth.instance;
 
 class AuthService {
+
+  static Future<bool> changePassword(String pass) async {
+    try {
+      await _auth.currentUser?.updatePassword(pass);
+      return true; // La operación fue exitosa
+    } catch (e) {
+      print("Error al cambiar la contraseña: $e");
+      return false; // Ocurrió un error
+    }
+  }
+
+  // Cambiar correo electrónico
+  static Future<bool> verificarEmailNuevo(String email) async {
+    try {
+      await _auth.currentUser!.verifyBeforeUpdateEmail(email);
+      return true; // La operación fue exitosa
+    } catch (e) {
+      print("Error al cambiar el correo electrónico: $e");
+      return false; // Ocurrió un error
+    }
+  }
+
+
   // Crea usuario
   static  Future createUserWithEmailAndPassword(String email, String password) async {
     return _auth.createUserWithEmailAndPassword(email: email, password: password);

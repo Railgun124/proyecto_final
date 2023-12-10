@@ -279,5 +279,10 @@ class DB {
     }
   }
 
+  static Future updateAlbumStatus(String IDevento,bool status) async{
+    //Se recupera desde la consulta
+      return await baseRemota.collection("events").doc(IDevento).update({'albumAbierto':status});
+  }
+
 
 }

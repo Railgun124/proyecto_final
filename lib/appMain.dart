@@ -17,12 +17,13 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title:  Text("Inicia sesión"),
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20),
         child: ListView(
           children: [
-            SizedBox(height: 20),
-            Text("Inicia sesión"),
             SizedBox(height: 10),
             TextField(
               controller: correo,

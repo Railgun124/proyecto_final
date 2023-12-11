@@ -59,7 +59,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Menu Principal"),),
+      appBar: AppBar(title: Text("EventusVox"),),
       body: dinamico(),
       drawer: Drawer(
         child: ListView(
@@ -80,7 +80,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 Text("${DB.obtenerUsuarioEmail()}",
                   style: TextStyle(
                       color: Colors.white,
-                      fontSize: 25
+                      fontSize: 17
                   ),),
               ],
             ),decoration: BoxDecoration(color: Colors.lightBlue),),

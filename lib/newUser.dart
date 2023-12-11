@@ -16,23 +16,27 @@ class _newUserState extends State<newUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("Regístrate"),
+      ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 20), // Ajusta según sea necesario
         child: ListView(
           children: [
-            Text("Regístrate"),
             SizedBox(height: 10),
             TextField(
               controller: correo,
               decoration: InputDecoration(
-                labelText: "Correo de usuario:",
+                labelText: "Correo de usuario",
+                prefixIcon: Icon(Icons.email),
               ),
             ),
             SizedBox(height: 10),
             TextField(
               controller: pass,
               decoration: InputDecoration(
-                labelText: "Contraseña:",
+                labelText: "Contraseña",
+                prefixIcon: Icon(Icons.key),
               ),
             ),
             SizedBox(height: 20),

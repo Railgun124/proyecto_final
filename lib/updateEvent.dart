@@ -48,7 +48,7 @@ class _updateEventState extends State<updateEvent> {
                   ],
                 ),
                 ListTile(
-                  title: Text('Ver albúm'),
+                  title: Text('Ver albúm', style: TextStyle(color: Colors.blue, fontSize: 20), textAlign: TextAlign.center,),
                   onTap: () {
                     Navigator.push(
                       context,

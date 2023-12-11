@@ -262,7 +262,6 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                   return DropdownMenuItem<String>(
                     value: evento,
                     child: Text(evento),
-                    onTap: () {},
                   );
                 }).toList(),
               ),
@@ -336,7 +335,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               await DB.insertarEvento(tJson);
                       nombreEvento.text = "";
                       descEvento.text = "";
-                      eventoSeleccionado = "";
+                      eventoSeleccionado = null;
                       fechaInicioEvento.text = "";
                       fechaFinEvento.text = "";
                       addFAE = false;

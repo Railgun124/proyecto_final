@@ -314,14 +314,12 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               SizedBox(height: 10),
               ElevatedButton(
                   onPressed: () async{
-                    try {
-                      String? codigoEvento = DB.obtenerUsuarioUID();
-                      if (codigoEvento != null && codigoEvento.length >= 6) {
-                        String primerosTres = codigoEvento.substring(0, 3);
-                        String ultimosTres = codigoEvento.substring(codigoEvento.length - 3);
-                        codigoEvento = '${primerosTres}${ultimosTres}${nombreEvento.text}';
-                      }
 
+                    if(nombreEvento.text.isEmpty || descEvento.text.isEmpty || eventoSeleccionado == null || fechaInicioEvento.text.isEmpty || fechaFinEvento.text.isEmpty){
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Faltan campos por llenar")));
+                      return;
+                    }
+                    try {
               usuarioID = DB.obtenerUsuarioUID()!;
 
               var tJson = {
@@ -331,14 +329,11 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                 "fechaInicio": fechaInicio,
                 "fechaFin": fechaFin,
                 "addFAE": addFAE,
-                "idInv": codigoEvento,
                 "idUser": usuarioID,
                 "albumAbierto": true
               };
 
               await DB.insertarEvento(tJson);
-
-                      codigoEvento = "";
                       nombreEvento.text = "";
                       descEvento.text = "";
                       eventoSeleccionado = "";
@@ -346,6 +341,10 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                       fechaFinEvento.text = "";
                       addFAE = false;
                       usuarioID = "";
+
+                      setState(() {
+                        _indice = 0;
+                      });
                     } catch(e) {
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Ocurrió un error, inténtalo de nuevo")));
                     }
@@ -462,7 +461,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: fechaFin,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2001),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != fechaFin) {

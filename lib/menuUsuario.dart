@@ -3,7 +3,7 @@ import 'package:proyecto_final/addEvento.dart';
 import 'package:proyecto_final/cambiarEmail.dart';
 import 'package:proyecto_final/cambiarPass.dart';
 import 'package:proyecto_final/serviciosRemotos.dart';
-import 'package:proyecto_final/viewEvent.dart';
+import 'package:proyecto_final/updateEvent.dart';
 import 'package:proyecto_final/viewInvitation.dart';
 
 class MenuUsuario extends StatefulWidget {
@@ -132,9 +132,10 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                       ),
                       onTap: () async{
                         await Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => viewEvent(
+                            MaterialPageRoute(builder: (context) => updateEvent(
                               eventID: '${eventosJSON.data?[indice]['id']}',
                               invitationID: '${eventosJSON.data?[indice]['id']}',
+                              albumAbierto: eventosJSON.data?[indice]['albumAbierto'],
                             )));
                         setState(() {
                           _indice = 0;
@@ -146,47 +147,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
             }
             return Center(child: CircularProgressIndicator());
           },
-        )
-          /*FutureBuilder(
-          future: DB.mostrarEventos("${DB.obtenerUsuarioUID()}"),
-          builder: (context, eventosJSON) {
-            if (eventosJSON.hasData) {
-              return ListView.builder(
-                itemCount: eventosJSON.data?.length,
-                itemBuilder: (context, indice) {
-                  return ListTile(
-                    title: Column(
-                      children: [
-                        (eventosJSON.data?[indice]['imagenesURL']==null)?
-                        Container(
-                          margin: EdgeInsets.all(10),
-                          height: 200,
-                          width: MediaQuery.sizeOf(context).width,
-                          color: Colors.grey,
-                          child: Icon(Icons.photo),
-                        )
-                            :
-                        Image.network("${eventosJSON.data?[indice]['imagenesURL'][0]}",height: 300,),
-                        Text("${eventosJSON.data?[indice]['tipo']} - ${eventosJSON.data?[indice]['nombre']}")
-                      ],
-                    ),
-                      onTap: () async{
-                        await Navigator.push(context,
-                            MaterialPageRoute(builder: (context) => viewEvent(
-                              eventID: '${eventosJSON.data?[indice]['id']}',
-                              invitationID: '${eventosJSON.data?[indice]['id']}',
-                            )));
-                        setState(() {
-                          _indice = 0;
-                        });
-                      }
-                  );
-                },
-              );
-            }
-            return Center(child: CircularProgressIndicator());
-          },
-        )*/;
+        );
       }
     //Invitaciones
       case 1:{
@@ -232,14 +193,21 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                               ],
                             ),
                             onTap: () async{
-                              await Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => viewInvitation(
-                                    eventID: '${eventosJSON.data?[indice]['idEvento']}',
-                                    invitationID: '${eventosJSON.data?[indice]['id']}',
-                                  )));
-                              setState(() {
-                                _indice = 1;
+                              await DB.getEventoById(eventosJSON.data?[indice]['idEvento']).then((value) async{
+                                if(value[0]['albumAbierto'] == false){
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("El albúm está cerrado")));
+                                }else{
+                                  await Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) => viewInvitation(
+                                        eventID: '${eventosJSON.data?[indice]['idEvento']}',
+                                        invitationID: '${eventosJSON.data?[indice]['id']}',
+                                      )));
+                                  setState(() {
+                                    _indice = 1;
+                                  });
+                                }
                               });
+
                             },
                           );
                         }
@@ -252,66 +220,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
               }
               return Center(child: CircularProgressIndicator());
             },
-          )
-          /*FutureBuilder(
-            future: DB.mostrarInvitaciones("${DB.obtenerUsuarioUID()}"),
-            builder: (context, eventosJSON) {
-              if (eventosJSON.hasData) {
-                return ListView.builder(
-                  itemCount: eventosJSON.data?.length,
-                  itemBuilder: (context, indice) {
-                    return FutureBuilder(
-                      future: DB.getEventoById(eventosJSON.data?[indice]['idEvento']),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        } else if(snapshot.hasData){
-                          var imagenURL;
-                          if (snapshot.data != null &&
-                              snapshot.data?[0]['imagenesURL'] != null &&
-                              snapshot.data?[0]['imagenesURL'].isNotEmpty) {
-                            imagenURL = snapshot.data?[0]['imagenesURL'][0];
-                          }
-
-                          return ListTile(
-                            title: Column(
-                              children: [
-                                (imagenURL==null)?
-                                Container(
-                                  margin: EdgeInsets.all(10),
-                                  height: 200,
-                                  width: MediaQuery.of(context).size.width,
-                                  color: Colors.grey,
-                                  child: Icon(Icons.photo),
-                                )
-                                    :
-                                Image.network(imagenURL,height: 200,),
-                                Text("${eventosJSON.data?[indice]['tipo']} - ${eventosJSON.data?[indice]['nombre']}")
-                              ],
-                            ),
-                            onTap: () async{
-                              await Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) => viewInvitation(
-                                    eventID: '${eventosJSON.data?[indice]['idEvento']}',
-                                    invitationID: '${eventosJSON.data?[indice]['id']}',
-                                  )));
-                              setState(() {
-                                _indice = 1;
-                              });
-                            },
-                          );
-                        }
-                        return Center(child: CircularProgressIndicator(),);
-                      },
-                    );
-                  },
-                );
-              }
-              return Center(child: CircularProgressIndicator());
-            },
-          )*/,
+          ),
           floatingActionButton: FloatingActionButton(onPressed: ()async{
             await Navigator.push(context,
                 MaterialPageRoute(builder: (context) => addEvent()));
@@ -413,33 +322,21 @@ class _MenuUsuarioState extends State<MenuUsuario> {
                         codigoEvento = '${primerosTres}${ultimosTres}${nombreEvento.text}';
                       }
 
-                      usuarioID = DB.obtenerUsuarioUID()!;
+              usuarioID = DB.obtenerUsuarioUID()!;
 
-                      var tJson = {
-                        "nombre": nombreEvento.text,
-                        "descripcion": descEvento.text,
-                        "tipo": eventoSeleccionado,
-                        "fechaInicio": fechaInicio,
-                        "fechaFin": fechaFin,
-                        "addFAE": addFAE,
-                        "idInv": codigoEvento,
-                        "idUser": usuarioID,
-                      };
+              var tJson = {
+                "nombre": nombreEvento.text,
+                "descripcion": descEvento.text,
+                "tipo":eventoSeleccionado,
+                "fechaInicio": fechaInicio,
+                "fechaFin": fechaFin,
+                "addFAE": addFAE,
+                "idInv": codigoEvento,
+                "idUser": usuarioID,
+                "albumAbierto": true
+              };
 
-                      var EventId = await DB.insertarEvento(tJson);
-
-                      var JSONTemp = {
-                        'nombre': nombreEvento.text,
-                        'tipo': eventoSeleccionado,
-                        'descripcion': descEvento.text,
-                        'idEvento': EventId,
-                        'idUser': usuarioID,
-                        'owner': usuarioID
-                      };
-
-                      DB.agregarEventoPropietario(JSONTemp).then((value) => {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Se creó el evento con éxito")))
-                      });
+              await DB.insertarEvento(tJson);
 
                       codigoEvento = "";
                       nombreEvento.text = "";
@@ -530,13 +427,14 @@ class _MenuUsuarioState extends State<MenuUsuario> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: fechaInicio,
-      firstDate: DateTime.now(),
+      firstDate: DateTime(2001),
       lastDate: DateTime(2101),
     );
     if (picked != null && picked != fechaInicio) {
-      if (picked.isAfter(fechaInicio)) {
+      if (picked.isBefore(fechaFin)) {
         setState(() {
           fechaInicio = picked;
+          fechaInicioEvento.text = "${fechaInicio.day}/${fechaInicio.month}/${fechaInicio.year}";
         });
       } else {
         showDialog(
@@ -571,6 +469,7 @@ class _MenuUsuarioState extends State<MenuUsuario> {
       if (picked.isAfter(fechaInicio)) {
         setState(() {
           fechaFin = picked;
+          fechaFinEvento.text = "${fechaFin.day}/${fechaFin.month}/${fechaFin.year}";
         });
       } else {
         showDialog(

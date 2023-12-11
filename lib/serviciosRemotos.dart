@@ -184,8 +184,8 @@ class DB {
   // Verificar que no agregues tu propio evento
   static Future verificarAgregarEventoPropio(String IDevento, String IDUser) async{
     var evento = await baseRemota.collection("events").where("idUser",isEqualTo: IDUser).get();
-    String eventid = evento.docs.first.id;
     if (evento.size>0) {
+      String eventid = evento.docs.first.id;
       if (eventid == IDevento) {
         print(true);
         return true;
